@@ -1,79 +1,110 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapeamento de Cargos & Salários</title>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
-        h1 { color: #1a365d; margin-bottom: 30px; font-size: 24px; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-blue { background-color: #2563eb; color: white; }
-        .btn-blue:hover { background-color: #1d4ed8; }
-        .btn-gray { background-color: #64748b; color: white; }
-        .btn-gray:hover { background-color: #475569; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma RH - Mapeamento</title>
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { font-family: sans-serif; background: #f4f7f9; display: flex; justify-content: center; padding: 20px; }
+    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+    h1 { color: #1e293b; text-align: center; font-size: 22px; }
+    .form-group { margin-bottom: 15px; }
+    label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+    input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+    .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; font-size: 16px; }
+    .btn-blue { background: #2563eb; color: white; }
+    .btn-gray { background: #64748b; color: white; }
+    .btn-link { background: none; color: #64748b; text-decoration: underline; font-size: 14px; }
+  </style>
 </head>
 <body>
-    <div id="root"></div>
+  <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState } = React;
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-        function App() {
-            const [view, setView] = useState('home');
-            const [pass, setPass] = useState('');
+    function App() {
+      const [view, setView] = useState('home');
+      const [pass, setPass] = useState('');
+      
+      // Estado do formulário centralizado
+      const [formData, setFormData] = useState({ nome: '', cargo: '', atividades: '' });
 
-            const handleLogin = () => {
-                if (pass === 'RH2026') {
-                    alert('Acesso ao Painel RH autorizado!');
-                    // Aqui entraria o seu painel original
-                } else {
-                    alert('Senha incorreta!');
-                }
-            };
+      // Função para atualizar campos sem perder o foco
+      const updateField = (field, value) => {
+        setFormData(prev => ({ ...prev, [field]: value }));
+      };
 
-            if (view === 'home') {
-                return (
-                    <div className="card">
-                        <h1>Mapeamento de Cargos 2025/2026</h1>
-                        <button className="btn btn-blue" onClick={() => setView('colaborador')}>Sou Colaborador</button>
-                        <button className="btn btn-gray" onClick={() => setView('rh')}>Acesso RH</button>
-                    </div>
-                );
-            }
+      if (view === 'home') return (
+        <div className="card">
+          <h1>Mapeamento de Cargos 2025/2026</h1>
+          <button className="btn btn-blue" onClick={() => setView('colaborador')}>Sou Colaborador</button>
+          <button className="btn btn-gray" onClick={() => setView('rh')}>Acesso RH</button>
+        </div>
+      );
 
-            if (view === 'colaborador') {
-                return (
-                    <div className="card">
-                        <h1>Ficha do Colaborador</h1>
-                        <input type="text" placeholder="Seu Nome Completo" />
-                        <input type="text" placeholder="Seu Cargo" />
-                        <button className="btn btn-blue" onClick={() => { alert('Ficha enviada!'); setView('home'); }}>Enviar Agora</button>
-                        <button style={{background:'none', border:'none', color:'#64748b', cursor:'pointer'}} onClick={() => setView('home')}>Voltar</button>
-                    </div>
-                );
-            }
+      if (view === 'colaborador') return (
+        <div className="card">
+          <h1>Ficha do Colaborador</h1>
+          
+          <div className="form-group">
+            <label>Nome Completo</label>
+            <input 
+              type="text" 
+              value={formData.nome} 
+              onChange={(e) => updateField('nome', e.target.value)} 
+              placeholder="Digite o seu nome"
+            />
+          </div>
 
-            if (view === 'rh') {
-                return (
-                    <div className="card">
-                        <h1>Login Restrito RH</h1>
-                        <input type="password" placeholder="Digite a senha" value={pass} onChange={(e) => setPass(e.target.value)} />
-                        <button className="btn btn-gray" onClick={handleLogin}>Entrar no Painel</button>
-                        <button style={{background:'none', border:'none', color:'#64748b', cursor:'pointer', marginTop:'10px'}} onClick={() => setView('home')}>Voltar</button>
-                    </div>
-                );
-            }
-        }
+          <div className="form-group">
+            <label>Cargo Atual</label>
+            <input 
+              type="text" 
+              value={formData.cargo} 
+              onChange={(e) => updateField('cargo', e.target.value)} 
+              placeholder="Ex: Analista Financeiro"
+            />
+          </div>
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+          <div className="form-group">
+            <label>Principais Atividades</label>
+            <textarea 
+              rows="4" 
+              value={formData.atividades} 
+              onChange={(e) => updateField('atividades', e.target.value)} 
+              placeholder="O que você faz no dia a dia?"
+            />
+          </div>
+
+          <button className="btn btn-blue" onClick={() => { alert('Enviado!'); setView('home'); }}>Enviar Agora</button>
+          <button className="btn btn-link" onClick={() => setView('home')}>Voltar ao início</button>
+        </div>
+      );
+
+      if (view === 'rh') return (
+        <div className="card">
+          <h1>Acesso Restrito RH</h1>
+          <div className="form-group">
+            <label>Senha</label>
+            <input 
+              type="password" 
+              value={pass} 
+              onChange={(e) => setPass(e.target.value)} 
+              placeholder="Digite a senha"
+            />
+          </div>
+          <button className="btn btn-gray" onClick={() => pass === 'RH2026' ? alert('Acesso autorizado!') : alert('Incorreta!')}>Entrar</button>
+          <button className="btn btn-link" onClick={() => setView('home')}>Voltar</button>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
 </body>
 </html>
