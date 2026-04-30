@@ -1,132 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mapeamento de Cargos & Salários</title>
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <style>
-    body { font-family: sans-serif; background: #f4f7f9; margin: 0; padding: 0; color: #333; }
-    .container { max-width: 800px; margin: 40px auto; padding: 20px; }
-    .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .btn { padding: 12px 20px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 16px; transition: 0.2s; }
-    .btn-primary { background: #0056b3; color: white; width: 100%; }
-    .btn-primary:hover { background: #004494; }
-    .btn-back { background: none; color: #0056b3; margin-bottom: 20px; display: block; }
-    .input-group { margin-bottom: 20px; }
-    label { display: block; font-weight: bold; margin-bottom: 8px; font-size: 14px; }
-    input, select, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; box-sizing: border-box; }
-    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
-    th { background: #f8f9fa; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeamento de Cargos & Salários</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .card { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
+        h1 { color: #1a365d; margin-bottom: 30px; font-size: 24px; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-blue { background-color: #2563eb; color: white; }
+        .btn-blue:hover { background-color: #1d4ed8; }
+        .btn-gray { background-color: #64748b; color: white; }
+        .btn-gray:hover { background-color: #475569; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; }
+    </style>
 </head>
 <body>
-  <div id="root"></div>
+    <div id="root"></div>
 
-  <script type="text/babel">
-    const { useState, useEffect } = React;
+    <script type="text/babel">
+        const { useState } = React;
 
-    // --- COMPONENTES DE INPUT (FORA PARA EVITAR PERDA DE FOCO) ---
-    const MyInput = ({ label, value, onChange, placeholder }) => (
-      <div className="input-group">
-        <label>{label}</label>
-        <input type="text" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
-      </div>
-    );
+        function App() {
+            const [view, setView] = useState('home');
+            const [pass, setPass] = useState('');
 
-    const MyTextArea = ({ label, value, onChange, placeholder }) => (
-      <div className="input-group">
-        <label>{label}</label>
-        <textarea rows="4" value={value} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} />
-      </div>
-    );
+            const handleLogin = () => {
+                if (pass === 'RH2026') {
+                    alert('Acesso ao Painel RH autorizado!');
+                    // Aqui entraria o seu painel original
+                } else {
+                    alert('Senha incorreta!');
+                }
+            };
 
-    function App() {
-      const [screen, setScreen] = useState('home');
-      const [formData, setFormData] = useState({ nome: '', cargo: '', depto: '', atividades: '' });
-      const [submissions, setSubmissions] = useState([]);
-      const [pass, setPass] = useState('');
+            if (view === 'home') {
+                return (
+                    <div className="card">
+                        <h1>Mapeamento de Cargos 2025/2026</h1>
+                        <button className="btn btn-blue" onClick={() => setView('colaborador')}>Sou Colaborador</button>
+                        <button className="btn btn-gray" onClick={() => setView('rh')}>Acesso RH</button>
+                    </div>
+                );
+            }
 
-      useEffect(() => {
-        const saved = localStorage.getItem('dados_mapeamento');
-        if (saved) setSubmissions(JSON.parse(saved));
-      }, []);
+            if (view === 'colaborador') {
+                return (
+                    <div className="card">
+                        <h1>Ficha do Colaborador</h1>
+                        <input type="text" placeholder="Seu Nome Completo" />
+                        <input type="text" placeholder="Seu Cargo" />
+                        <button className="btn btn-blue" onClick={() => { alert('Ficha enviada!'); setView('home'); }}>Enviar Agora</button>
+                        <button style={{background:'none', border:'none', color:'#64748b', cursor:'pointer'}} onClick={() => setView('home')}>Voltar</button>
+                    </div>
+                );
+            }
 
-      const handleSend = () => {
-        if (!formData.nome || !formData.cargo) return alert("Por favor, preencha Nome e Cargo.");
-        const newData = [...submissions, { ...formData, id: Date.now() }];
-        setSubmissions(newData);
-        localStorage.setItem('dados_mapeamento', JSON.stringify(newData));
-        alert("Enviado com sucesso!");
-        setFormData({ nome: '', cargo: '', depto: '', atividades: '' });
-        setScreen('home');
-      };
+            if (view === 'rh') {
+                return (
+                    <div className="card">
+                        <h1>Login Restrito RH</h1>
+                        <input type="password" placeholder="Digite a senha" value={pass} onChange={(e) => setPass(e.target.value)} />
+                        <button className="btn btn-gray" onClick={handleLogin}>Entrar no Painel</button>
+                        <button style={{background:'none', border:'none', color:'#64748b', cursor:'pointer', marginTop:'10px'}} onClick={() => setView('home')}>Voltar</button>
+                    </div>
+                );
+            }
+        }
 
-      if (screen === 'home') return (
-        <div className="container" style={{ textAlign: 'center' }}>
-          <h1>Mapeamento de Cargos 2025/2026</h1>
-          <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-            <button className="btn btn-primary" onClick={() => setScreen('form')}>Sou Colaborador</button>
-            <button className="btn" style={{ background: '#6c757d', color: 'white' }} onClick={() => setScreen('login')}>Acesso RH</button>
-          </div>
-        </div>
-      );
-
-      if (screen === 'form') return (
-        <div className="container">
-          <div className="card">
-            <button className="btn btn-back" onClick={() => setScreen('home')}>← Voltar</button>
-            <h2>Ficha do Colaborador</h2>
-            <MyInput label="Nome Completo" value={formData.nome} onChange={(v) => setFormData({...formData, nome: v})} />
-            <MyInput label="Cargo Atual" value={formData.cargo} onChange={(v) => setFormData({...formData, cargo: v})} />
-            <div className="input-group">
-              <label>Departamento</label>
-              <select value={formData.depto} onChange={(e) => setFormData({...formData, depto: e.target.value})}>
-                <option value="">Selecione...</option>
-                <option value="Financeiro">Financeiro</option>
-                <option value="Recursos Humanos">Recursos Humanos</option>
-                <option value="Operacional">Operacional</option>
-              </select>
-            </div>
-            <MyTextArea label="Descrição das Atividades" value={formData.atividades} onChange={(v) => setFormData({...formData, atividades: v})} />
-            <button className="btn btn-primary" onClick={handleSend}>Enviar Respostas</button>
-          </div>
-        </div>
-      );
-
-      if (screen === 'login') return (
-        <div className="container" style={{ maxWidth: '400px' }}>
-          <div className="card">
-            <h2>Login RH</h2>
-            <input type="password" placeholder="Senha" value={pass} onChange={e => setPass(e.target.value)} />
-            <button className="btn btn-primary" style={{ marginTop: '15px' }} onClick={() => pass === 'RH2026' ? setScreen('dash') : alert("Incorreta")}>Entrar</button>
-            <button className="btn-back" style={{ width: '100%', marginTop: '10px' }} onClick={() => setScreen('home')}>Cancelar</button>
-          </div>
-        </div>
-      );
-
-      if (screen === 'dash') return (
-        <div className="container" style={{ maxWidth: '900px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <h2>Painel RH</h2>
-            <button className="btn" style={{ background: '#dc3545', color: 'white' }} onClick={() => setScreen('home')}>Sair</button>
-          </div>
-          <div className="card">
-            <table>
-              <thead><tr><th>Nome</th><th>Cargo</th><th>Depto</th></tr></thead>
-              <tbody>
-                {submissions.map(s => <tr key={s.id}><td>{s.nome}</td><td>{s.cargo}</td><td>{s.depto}</td></tr>)}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      );
-    }
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-  </script>
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
